@@ -11,6 +11,7 @@ from models import (
 )
 from services.code_runner import CodeRunner
 from services.gemini_service import GeminiService
+from services.diagnosis_service import answer_quality
 
 logger = logging.getLogger("raze.engine")
 
@@ -75,6 +76,7 @@ class DebugEngine:
 
         if session.stage == SessionStage.WAITING_ANSWER_1:
             session.answer_1 = answer
+            session.answer_1_quality = answer_quality(session, answer)
             # Generate Q2
             q2, used_fallback = await GeminiService.generate_q2(session)
             session.question_2 = q2
@@ -86,6 +88,7 @@ class DebugEngine:
 
         elif session.stage == SessionStage.WAITING_ANSWER_2:
             session.answer_2 = answer
+            session.answer_2_quality = answer_quality(session, answer)
             # STOP RULE: Move immediately to final solution! No Q3!
             solution, used_fallback = await GeminiService.generate_final_solution(session)
             session.final_solution = solution

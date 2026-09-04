@@ -47,6 +47,9 @@ class DebugSession(BaseModel):
     final_solution: Optional[FinalSolution] = None
     used_deterministic_fallback: bool = False
     ai_unavailable_notice: Optional[str] = None
+    diagnosis_provider: Optional[str] = None
+    answer_1_quality: Optional[str] = None
+    answer_2_quality: Optional[str] = None
     created_at: float = Field(default_factory=time.time)
     updated_at: float = Field(default_factory=time.time)
 
@@ -82,4 +85,7 @@ class SessionResponse(BaseModel):
     is_completed: bool = False
     used_deterministic_fallback: bool = False
     ai_unavailable_notice: Optional[str] = None
+    diagnosis_provider: Optional[str] = None
+    answer_1_quality: Optional[str] = None
+    answer_2_quality: Optional[str] = None
 

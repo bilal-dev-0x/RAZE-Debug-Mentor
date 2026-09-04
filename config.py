@@ -54,6 +54,22 @@ class Settings:
         os.getenv("GEMINI_MODEL") or file_vals.get("GEMINI_MODEL") or "gemini-3.6-flash"
     ).strip()
 
+    OPENROUTER_API_KEY: str = (
+        os.getenv("OPENROUTER_API_KEY") or file_vals.get("OPENROUTER_API_KEY") or ""
+    ).strip()
+    OPENROUTER_MODEL: str = (
+        os.getenv("OPENROUTER_MODEL") or file_vals.get("OPENROUTER_MODEL") or ""
+    ).strip()
+    GROQ_API_KEY: str = (
+        os.getenv("GROQ_API_KEY") or file_vals.get("GROQ_API_KEY") or ""
+    ).strip()
+    GROQ_MODEL: str = (
+        os.getenv("GROQ_MODEL") or file_vals.get("GROQ_MODEL") or ""
+    ).strip()
+    AI_REQUEST_TIMEOUT: float = float(
+        os.getenv("AI_REQUEST_TIMEOUT") or file_vals.get("AI_REQUEST_TIMEOUT") or "30"
+    )
+
     # Code Execution Settings
     CODE_EXEC_TIMEOUT_SECONDS: float = float(
         os.getenv("CODE_EXEC_TIMEOUT_SECONDS") or file_vals.get("CODE_EXEC_TIMEOUT_SECONDS") or "5.0"

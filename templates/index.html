@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RAZE — AI Debugging Mentor</title>
+  <link rel="icon" type="image/jpeg" href="/static/images/raze-logo.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,7 +17,7 @@
   <header class="top-nav">
     <div class="nav-brand">
       <div class="brand-badge">
-        <span class="brand-glyph">✦</span>
+        <img class="raze-logo" src="/static/images/raze-logo.jpg" alt="RAZE logo">
         <span class="brand-title">RAZE</span>
       </div>
       <span class="brand-subtitle">AI Debugging Mentor</span>
@@ -44,6 +45,22 @@
 
   <!-- Main Wide Viewport Workspace -->
   <main class="main-workspace">
+    <aside class="side-nav" aria-label="Workspace navigation">
+      <div class="side-nav-brand">
+        <img class="raze-logo" src="/static/images/raze-logo.jpg" alt="RAZE logo">
+        <span>RAZE</span>
+      </div>
+      <span class="side-nav-label">Workspace</span>
+      <nav class="side-nav-links">
+        <a class="side-nav-link active" href="#paneInput">Code workspace</a>
+        <a class="side-nav-link" href="#paneMentor">Investigation</a>
+      </nav>
+      <div class="side-nav-footer">
+        <span class="side-nav-label">Runtime</span>
+        <span class="side-nav-runtime">Python execution enabled</span>
+      </div>
+    </aside>
+
     <!-- LEFT PANE: Problem Input & Execution Environment -->
     <section class="pane pane-input" id="paneInput">
       <div class="pane-header">
@@ -93,8 +110,8 @@
       <!-- Problem Context Inputs (Collapsible Drawer) -->
       <div class="evidence-section">
         <div class="section-title-sub">
-          <span>Diagnostic Evidence</span>
-          <span class="sub-hint">(Optional context to guide the mentor)</span>
+          <span>Diagnostic Context</span>
+          <span class="sub-hint">Optional evidence</span>
         </div>
 
         <div class="evidence-grid">
@@ -197,7 +214,7 @@
         <div class="mentor-card observation-card" id="cardObservation" style="display: none;">
           <div class="card-meta">
             <div class="mentor-avatar">
-              <span>✦</span>
+              <img class="mentor-logo" src="/static/images/raze-logo.jpg" alt="">
             </div>
             <div class="card-author">
               <span class="author-name">RAZE Senior Mentor</span>

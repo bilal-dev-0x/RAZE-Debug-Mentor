@@ -49,7 +49,10 @@ def _to_response(session) -> SessionResponse:
         final_solution=session.final_solution,
         is_completed=(session.stage.value == "completed"),
         used_deterministic_fallback=session.used_deterministic_fallback,
-        ai_unavailable_notice=session.ai_unavailable_notice
+        ai_unavailable_notice=session.ai_unavailable_notice,
+        diagnosis_provider=session.diagnosis_provider,
+        answer_1_quality=session.answer_1_quality,
+        answer_2_quality=session.answer_2_quality
     )
 
 @app.get("/", response_class=HTMLResponse)

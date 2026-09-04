@@ -32,27 +32,90 @@ class DeterministicAnalyzer:
             return name_error_result
 
         # 2. Check for Shallow Copy + Mutation during iteration (e.g. Test A)
+        mutable_default_result = cls._check_mutable_default(code)
+        if mutable_default_result:
+            return mutable_default_result
+
+        # 3. Check for nested shallow-copy mutation
+        nested_shallow_result = cls._check_nested_shallow_copy(code)
+        if nested_shallow_result:
+            return nested_shallow_result
+
         shallow_mutation_result = cls._check_shallow_and_mutation(code)
         if shallow_mutation_result:
             return shallow_mutation_result
 
-        # 3. Check for ZeroDivisionError
+        # 4. Check for ZeroDivisionError
         zero_div_result = cls._check_zero_division(code, exec_res, stderr)
         if zero_div_result:
             return zero_div_result
 
-        # 4. Check for IndexError
+        # 5. Check for IndexError
         index_error_result = cls._check_index_error(code, exec_res, stderr)
         if index_error_result:
             return index_error_result
 
-        # 5. Check for SyntaxError
+        # 6. Check for SyntaxError
         syntax_error_result = cls._check_syntax_error(code, exec_res, stderr)
         if syntax_error_result:
             return syntax_error_result
 
         # No confident deterministic pattern matched on THIS code
         return None
+
+    @classmethod
+    def _check_mutable_default(cls, code: str) -> Optional[Tuple[str, str, str, FinalSolution]]:
+        match = re.search(r"def\s+(\w+)\s*\([^)]*\b(\w+)\s*=\s*\[\s*\]\s*\)", code)
+        if not match or f"{match.group(2)}.append" not in code:
+            return None
+        function_name, parameter = match.groups()
+        corrected = re.sub(
+            rf"def\s+{re.escape(function_name)}(\s*\([^)]*\b{re.escape(parameter)})\s*=\s*\[\s*\]",
+            rf"def {function_name}\1=None",
+            code,
+            count=1,
+        )
+        marker = f"def {function_name}"
+        insertion = f"\n    if {parameter} is None:\n        {parameter} = []"
+        if insertion.strip() not in corrected:
+            body_start = corrected.find("\n", corrected.find(marker))
+            corrected = corrected[:body_start] + insertion + corrected[body_start:]
+        return (
+            f"Function `{function_name}` uses a list as the default value for `{parameter}` and appends to it.",
+            f"When is the default list for `{parameter}` created: once when `{function_name}` is defined, or once per call?",
+            f"What sentinel value could you use so each call creates a fresh list for `{parameter}`?",
+            FinalSolution(
+                what_i_found=f"`{parameter}=[]` is a mutable default argument in `{function_name}`.",
+                whats_happening=f"Python evaluates the default list once when `{function_name}` is defined, so every call reuses the same list and `{parameter}.append()` keeps prior tasks.",
+                root_cause="Mutable Default Argument",
+                corrected_code=corrected,
+                why_fix_works=f"Using `{parameter}=None` and creating the list inside the function gives each call an independent list.",
+                lesson="Use immutable sentinels such as None for defaults that need fresh mutable state.",
+            ),
+        )
+
+    @classmethod
+    def _check_nested_shallow_copy(cls, code: str) -> Optional[Tuple[str, str, str, FinalSolution]]:
+        match = re.search(r"(\w+)\s*=\s*(\w+)\.copy\(\)", code)
+        if not match or not re.search(r"\b(?:\w+\.)?\w+\[[^\]]+\].*\+=|\[.*\]\s*\+=", code):
+            return None
+        copy_var, original = match.groups()
+        corrected = re.sub(rf"\b{re.escape(copy_var)}\s*=\s*{re.escape(original)}\.copy\(\)", f"{copy_var} = copy.deepcopy({original})", code, count=1)
+        if "import copy" not in corrected:
+            corrected = "import copy\n" + corrected
+        return (
+            f"`{copy_var} = {original}.copy()` duplicates only the outer container while later code mutates nested values.",
+            f"Which nested objects remain shared after `{original}.copy()`?",
+            f"Which copy operation recursively duplicates the nested dictionaries and lists?",
+            FinalSolution(
+                what_i_found=f"`{original}.copy()` creates a shallow copy, so nested student records remain shared with `{copy_var}`.",
+                whats_happening=f"Mutating nested values through `{copy_var}` changes the same dictionaries and lists still referenced by `{original}`.",
+                root_cause="Shallow Copying of Nested Data Structures",
+                corrected_code=corrected,
+                why_fix_works=f"`copy.deepcopy({original})` recursively creates independent nested objects.",
+                lesson="Use deepcopy when independent copies of nested mutable data are required.",
+            ),
+        )
 
     @classmethod
     def _check_name_error(cls, code: str, exec_res: ExecutionResult, stderr: str) -> Optional[Tuple[str, str, str, FinalSolution]]:

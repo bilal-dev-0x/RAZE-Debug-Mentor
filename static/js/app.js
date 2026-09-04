@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const sessionStatusText = document.getElementById('sessionStatusText');
   const sessionPill = document.getElementById('sessionPill');
   const sessionShortId = document.getElementById('sessionShortId');
+  const engineText = document.querySelector('.engine-text');
+  const initialEngineText = engineText ? engineText.textContent : '';
 
   const calmLoader = document.getElementById('calmLoader');
   const loaderText = document.getElementById('loaderText');
@@ -78,6 +80,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const stepIndicatorQ1 = document.getElementById('stepIndicatorQ1');
   const stepIndicatorQ2 = document.getElementById('stepIndicatorQ2');
   const stepIndicatorSol = document.getElementById('stepIndicatorSol');
+
+  function updateProviderLabel(provider) {
+    if (!engineText || !provider) return;
+    const labels = {
+      gemini: 'AI • Gemini',
+      openrouter: 'AI • OpenRouter',
+      groq: 'AI • Groq',
+      local: 'Local Diagnostic Engine'
+    };
+    engineText.textContent = labels[provider] || initialEngineText;
+  }
 
   // =========================================================================
   // Editor Helpers & Line Numbering
@@ -221,6 +234,7 @@ print("Age:", ages)`;
 
     // Reset UI Elements
     sessionStatusText.textContent = 'Ready for new problem';
+    if (engineText) engineText.textContent = initialEngineText;
     sessionPill.style.display = 'none';
     sessionShortId.textContent = '--';
 
@@ -416,6 +430,7 @@ print("Age:", ages)`;
 
       // Set active session identity
       activeSessionId = data.session_id;
+      updateProviderLabel(data.diagnosis_provider);
       sessionShortId.textContent = activeSessionId.substring(0, 8);
       sessionPill.style.display = 'inline-block';
       sessionStatusText.textContent = 'Diagnostic Session Active';
@@ -487,6 +502,7 @@ print("Age:", ages)`;
 
       const data = await resp.json();
       hideLoader();
+      updateProviderLabel(data.diagnosis_provider);
 
       // Lock Q1 Form and show user's answer
       formAnswer1.style.display = 'none';
@@ -539,6 +555,7 @@ print("Age:", ages)`;
 
       const data = await resp.json();
       hideLoader();
+      updateProviderLabel(data.diagnosis_provider);
 
       // Lock Q2 Form and show user's answer
       formAnswer2.style.display = 'none';
