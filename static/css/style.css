@@ -57,7 +57,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -75,6 +75,8 @@ body {
   padding: 0 24px;
   z-index: 100;
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
 }
 
 .nav-brand {
@@ -252,15 +254,12 @@ body {
   flex: 1;
   display: grid;
   grid-template-columns: 48% 52%;
-  height: calc(100vh - 58px);
-  overflow: hidden;
+  min-height: calc(100vh - 58px);
 }
 
 .pane {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow-y: auto;
   padding: 20px 24px;
 }
 
@@ -652,7 +651,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  overflow-y: auto;
   padding-right: 4px;
 }
 
@@ -1041,17 +1039,8 @@ body {
    Responsive Adaptations
    ========================================================================== */
 @media (max-width: 1024px) {
-  body {
-    overflow: auto;
-  }
   .main-workspace {
     grid-template-columns: 1fr;
-    height: auto;
-    overflow: visible;
-  }
-  .pane {
-    height: auto;
-    overflow: visible;
   }
   .pane-input {
     border-right: none;
