@@ -1,0 +1,6 @@
+{
+  "name": "RAZE — Senior Python Debugging Mentor",
+  "description": "Full-screen developer workspace and senior AI mentor that guides root cause discovery through diagnostic questions and verified code fixes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
